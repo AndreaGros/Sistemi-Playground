@@ -155,33 +155,72 @@ void trovaMaggiore(nodo* node)
 
 nodo* swap(nodo* current)
 {
-    nodo* aus;
     if(contaNodi(current)<2)
         return current;
-    aus=current->next;
-    current->next=aus->next;
-    aus->next=current;
+    nodo* aus = current->next;
+    current->next = aus->next;
+    aus->next = current;
     return aus;
 }
 
 nodo* ordinamento(nodo* head)
 {
+    nodo* current = head;
+    nodo* next;
+    nodo* prev;
+    int swapped;
     int i, j, n;
-    nodo* p, * aus;
-    aus=head;
 
     n=contaNodi(head);
 
-    for(int i = 0; i < n - 1; i++)
-    {
-        p=head;
-        for(int j = 0; j < n - i - 1; j++)
-        {
-            if (p->id_Nodo > p->next->id_Nodo)
-                p=swap(p);
+    for (int i = 0; i < n - 1; i++) {
+        current = head;
+        prev = NULL;
+        swapped = 0;
+
+        for (int j = 0; j < n - 1 - i; j++) {
+            if (current->id_Nodo > current->next->id_Nodo) {
+                nodo* temp = swap(current);
+
+                if (prev == NULL) {
+                    head = temp;
+                } else {
+                    prev->next = temp;
+                }
+                prev = temp;
+                swapped = 1;
+            } else {
+                prev = current;
+                current = current->next;
+            }
+        }
+        if (!swapped) {
+            break;
         }
     }
-    return aus;
+
+    return head;
+
+
+//    do {
+//        swapped = 0;
+//        current = head;
+//
+//        if (current != NULL && current->next != NULL && current->id_Nodo > current->next->id_Nodo) {
+//            head = swap(current);  // Aggiorna la testa della lista
+//            swapped = 1;
+//        }
+//
+//        // Ciclo per il resto della lista
+//        while (current != NULL && current->next != NULL && current->next->next != NULL) {
+//            if (current->next->id_Nodo > current->next->next->id_Nodo) {
+//                current->next = swap(current->next); // Aggiorna il puntatore a current->next con il risultato di swap
+//                swapped = 1;
+//            }
+//            current = current->next;
+//        }
+//    } while (swapped);
+//    return head;
 }
 
 nodo* eliminaPos(nodo* node, int x)
