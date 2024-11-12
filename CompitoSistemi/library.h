@@ -1,0 +1,200 @@
+#ifndef LIBRARY_H_INCLUDED
+#define LIBRARY_H_INCLUDED
+#include <string.h>
+#include <float.h>
+
+#define MAX_AUTORE 50
+#define MAX_TITOLO 100
+#define ISBN_N 13
+#define MAX_LINE 200
+
+int id_Nodo=0;
+
+typedef struct s_node
+{
+    int id_Nodo;
+    char autore[MAX_AUTORE + 1];
+    char titolo[MAX_TITOLO + 1];
+    char ISBN[ISBN_N];
+    int anno;
+    char editore[MAX_AUTORE+1];
+    float prezzo;
+    struct s_node* next;
+} nodo;
+
+
+nodo* caricaFile(nodo* next)
+{
+    FILE *file = fopen("biblio - orig.csv", "r");
+    char line[MAX_LINE+1];
+    char *token;
+    nodo* n_p;
+    while (fgets(line, MAX_LINE, file))
+    {
+        n_p=(nodo*)malloc(sizeof(nodo));
+        n_p->next=next;
+        n_p->id_Nodo = id_Nodo++;
+        token=strtok(line, "#");
+        strcpy(n_p->autore,token);
+        token=strtok(NULL, "#");
+        strcpy(n_p->titolo,token);
+        token=strtok(NULL, "#");
+        strcpy(n_p->ISBN,token);
+        token=strtok(NULL, "#");
+        n_p->anno=atoi(token);
+        token=strtok(NULL, "#");
+        strcpy(n_p->editore,token);
+        token=strtok(NULL, "\n");
+        n_p->prezzo=atoi(token);
+        next=n_p;
+    }
+    fclose(file);
+    return next;
+}
+
+nodo* inserisciNodo(void* next)
+{
+    nodo* n_p;
+    n_p=(nodo*)malloc(sizeof(nodo));
+    n_p->next=next;
+    n_p->id_Nodo = id_Nodo++;
+
+    fflush(stdin);
+    printf("Inserisci il titolo del libro(max %i carattere): ",(MAX_AUTORE));
+    gets(n_p->titolo);
+
+    fflush(stdin);
+    printf("Inserisci l'autore del libro(max %i carattere): ", (MAX_TITOLO));
+    gets(n_p->autore);
+
+    fflush(stdin);
+    printf("Inserisci ISBN(%i caratteri): ", (ISBN_N));
+    gets(n_p->ISBN);
+
+    printf("Inserisci l'anno di pubblicazione: ");
+    scanf("%d",&(n_p->anno));
+
+    fflush(stdin);
+    printf("Inserisci l'editore(max %i caratteri): ", (MAX_AUTORE));
+    gets(n_p->editore);
+
+    printf("Inserisci il prezzo del libro: ");
+    fflush(stdin);
+    scanf("%f",&(n_p->prezzo));
+
+    printf("Libro aggiunto correttamente\n");
+    return n_p;
+}
+
+
+nodo* inserisciCoda(nodo* head)
+{
+    nodo* p_node = head;
+    if(p_node == NULL)
+    {
+        return inserisciNodo(NULL);
+    }
+    while(p_node->next != NULL)
+    {
+        p_node = p_node->next;
+    }
+    p_node->next = inserisciNodo(NULL);
+    return head;
+}
+
+nodo* eliminaNodo(nodo* node)
+{
+    printf("Sto cancellando il nodo %d \n",node->id_Nodo);
+    nodo* aus = node->next;
+    free(node);
+    return aus;
+}
+
+int contaNodi(nodo* node)
+{
+    int i=0;
+    while(node!=NULL)
+    {
+        node=node->next;
+        i++;
+    }
+    return i;
+}
+
+void mostraLista(nodo* p_node)
+{
+    while(p_node != NULL)
+    {
+        printf("Libro n.%i: %s \n%s \n%i, %.2f euro\n", p_node->id_Nodo,
+               p_node->titolo,
+               p_node->autore,
+               p_node->anno, p_node->prezzo);
+        p_node=p_node->next;
+    }
+    printf("NULL \n");
+}
+
+void trovaMaggiore(nodo* node)
+{
+    nodo* aus;
+    float massimo=FLT_MIN;
+    while(node!=NULL)
+    {
+        if(node->prezzo>massimo)
+        {
+            massimo= node->prezzo;
+            aus=node;
+        }
+        node=node->next;
+    }
+    printf("Libro n.%i: %s \n%s \n%i, %f euro\n", aus->id_Nodo,
+           aus->titolo,
+           aus->autore,
+           aus->anno, aus->prezzo);
+}
+
+nodo* swap(nodo* current)
+{
+    nodo* aus;
+    if(contaNodi(current)<2)
+        return current;
+    aus=current->next;
+    current->next=aus->next;
+    aus->next=current;
+    return aus;
+}
+
+nodo* ordinamento(nodo* head)
+{
+    int i, j, n;
+    nodo* p, * aus;
+    aus=head;
+
+    n=contaNodi(head);
+
+    for(int i = 0; i < n - 1; i++)
+    {
+        p=head;
+        for(int j = 0; j < n - i - 1; j++)
+        {
+            if (p->id_Nodo > p->next->id_Nodo)
+                p=swap(p);
+        }
+    }
+    return aus;
+}
+
+nodo* eliminaPos(nodo* node, int x)
+{
+//    while(node!=NULL)
+//    {
+//        if(node->prezzo>massimo)
+//        {
+//            massimo= node->prezzo;
+//            aus=node;
+//        }
+//        node=node->next;
+//    }
+}
+
+#endif // LIBRARY_H_INCLUDED
