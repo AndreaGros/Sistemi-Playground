@@ -65,9 +65,25 @@ int main()
             break;
         case 'I':
         case 'i':
-            printf("Inserisci la posizione x: ");
-            scanf("%d", &x);
-            head=eliminaPos(head, x);
+            do
+            {
+                printf("Inserisci x: ");
+                scanf("%d",&x);
+            }
+            while(x<1);
+            head=duplica(head, x);
+            break;
+        case 'L':
+        case 'l':
+            scriviFile(head);
+            break;
+        case 'M':
+        case 'm':
+            do{
+                printf("Inserisci x: ");
+                scanf("%d",&x);
+            }while(x>contaNodi(head)-1);
+            head=eliminaX(head, x);
             break;
         }
 
@@ -106,7 +122,9 @@ char scriviMenu()
     printf("F. Trova maggiore\n");
     printf("G. Swap primi 2\n");
     printf("H. Ordinamento\n");
-    printf("I. Elimina in posizione X\n");
+    printf("I. Duplica lista X volte\n");
+    printf("L. Scrivi nel file\n");
+    printf("M. Elimina in pos x\n");
     printf("Q. Esci\n");
     printf("Scelta -> ");
     fflush(stdin);

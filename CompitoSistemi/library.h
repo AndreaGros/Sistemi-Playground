@@ -29,8 +29,9 @@ nodo* caricaFile(nodo* next)
     char line[MAX_LINE+1];
     char *token;
     nodo* n_p;
-    while (fgets(line, MAX_LINE, file))
+    while (!feof(file))
     {
+        fgets(line, MAX_LINE, file);
         n_p=(nodo*)malloc(sizeof(nodo));
         n_p->next=next;
         n_p->id_Nodo = id_Nodo++;
@@ -166,35 +167,43 @@ nodo* swap(nodo* current)
 nodo* ordinamento(nodo* head)
 {
     nodo* current = head;
-    nodo* next;
     nodo* prev;
     int swapped;
     int i, j, n;
 
     n=contaNodi(head);
 
-    for (int i = 0; i < n - 1; i++) {
+    for (i = 0; i < n - 1; i++)
+    {
         current = head;
         prev = NULL;
         swapped = 0;
 
-        for (int j = 0; j < n - 1 - i; j++) {
-            if (current->id_Nodo > current->next->id_Nodo) {
+        for (j = 0; j < n - 1 - i; j++)
+        {
+            if (current->id_Nodo > current->next->id_Nodo)
+            {
                 nodo* temp = swap(current);
 
-                if (prev == NULL) {
+                if (prev == NULL)
+                {
                     head = temp;
-                } else {
+                }
+                else
+                {
                     prev->next = temp;
                 }
                 prev = temp;
                 swapped = 1;
-            } else {
+            }
+            else
+            {
                 prev = current;
                 current = current->next;
             }
         }
-        if (!swapped) {
+        if (!swapped)
+        {
             break;
         }
     }
@@ -223,17 +232,74 @@ nodo* ordinamento(nodo* head)
 //    return head;
 }
 
-nodo* eliminaPos(nodo* node, int x)
+nodo* duplica(nodo* head, int x)
 {
-//    while(node!=NULL)
-//    {
-//        if(node->prezzo>massimo)
-//        {
-//            massimo= node->prezzo;
-//            aus=node;
-//        }
-//        node=node->next;
-//    }
+    nodo* node = head;
+    nodo* fine = head;
+    int i, j, n;
+
+    // Trova il numero di nodi attuali nella lista
+    n = contaNodi(head);
+
+    while (fine->next != NULL)
+        fine = fine->next;
+
+    for (i = 1; i < x; i++)
+    {
+        node = head;
+        for (j = 0; j < n; j++)
+        {
+            nodo* duplicato = (nodo*)malloc(sizeof(nodo));
+            duplicato->id_Nodo = id_Nodo++;
+            duplicato->next = NULL;
+            strcpy(duplicato->autore, node->autore);
+            strcpy(duplicato->titolo, node->titolo);
+            strcpy(duplicato->ISBN, node->ISBN);
+            duplicato->anno = node->anno;
+            strcpy(duplicato->editore, node->editore);
+            duplicato->prezzo = node->prezzo;
+
+            fine->next = duplicato;
+            fine = duplicato;
+
+            node = node->next;
+        }
+    }
+
+    return head;
 }
 
+void scriviFile(nodo* node)
+{
+    FILE *file = fopen("biblio - orig.csv", "w");
+    if (file == NULL)
+    {
+        printf("Errore nell'apertura del file!\n");
+        return;
+    }
+    while (node != NULL)
+    {
+        fprintf(file, "%s#%s#%s#%d#%s#%.2f\n", node->titolo,
+                node->autore,
+                node->ISBN,
+                node->anno,
+                node->editore,
+                node->prezzo);
+        node = node->next;
+    }
+    fclose(file);
+}
+
+eliminaX(nodo* node, int x)
+{
+    nodo* prev;
+    nodo* head=node;
+    for(int i=0;i<x;i++){
+        prev=node;
+        node=node->next;
+    }
+    prev->next=node->next;
+    free(node);
+    return head;
+}
 #endif // LIBRARY_H_INCLUDED
