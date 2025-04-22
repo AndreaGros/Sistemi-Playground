@@ -97,8 +97,19 @@ def ese9(a, b):
             l.append(str(i))
     return ",".join(l)
         
+def ese10(a, b):
+    d={}
+    for i in range(a, b+1):
+        d[i]=i*i
+    print("Inserisci un numero: ")
+    a=int(input())
+    if a in d.values():
+        print("Trovato")
     
-
+def ese11(l):
+    duplicati = tuple(l[i] for i in range(len(l) - 1) if l[i] == l[i + 1])
+    print(duplicati)
+    
 
 print(ese1(a, b))
 print(ese2(42165))
@@ -110,3 +121,5 @@ print(validateIP("192.168.15.255"))
 print(differenzaIP("192.0.0.0", "192.1.1.0"))
 print(ISBM("048665088X"))
 print(ese9(100, 200))
+print(ese10(5,10))
+print(ese11(a))
